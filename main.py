@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import time
 
 import requests
+import schedule
 
 from alpaca.data.historical import StockHistoricalDataClient
 from alpaca.data.requests import StockBarsRequest, StockLatestBarRequest
@@ -122,9 +123,10 @@ def get_actionable_assets(cheap_assets):
     return (buyable_assets, sellable_assets)
 
 
-if __name__ == '__main__':
+def main():
     try:
         start_time = datetime.now()
+        global data_client
         data_client = StockHistoricalDataClient(
             os.environ.get('APCA_API_KEY_ID'),
             os.environ.get('APCA_API_SECRET_KEY')
@@ -193,3 +195,11 @@ if __name__ == '__main__':
         sendNotification(f'This script took {datetime.now() - start_time}')
     except Exception as e:
         sendNotification('@everyone\nERROR: ' + str(e))
+
+
+if __name__ == '__main__':
+    schedule.every().day.at("11:30").do(main)
+
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
