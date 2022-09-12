@@ -105,12 +105,12 @@ def get_actionable_assets(cheap_assets):
         limit=210,
         timeframe=TimeFrame.Day
     )
-    bars = data_client.get_stock_bars(bars_request)
+    barSet = data_client.get_stock_bars(bars_request)
 
-    for symbol, bars in bars.items():
+    for i, (symbol, bars) in enumerate(barSet.data.items()):
         close_prices = [bar.close for bar in bars]
         close_prices.reverse()  # reversing makes it new to old
-        # print(close_prices)
+
         if len(close_prices) > 200:
             short_sma, long_sma = get_SMAs(close_prices)
             # a 'buy-able' asset's short_sma should have recently rose above its long_sma
@@ -155,7 +155,7 @@ def main():
                         time_in_force=TimeInForce.DAY
                     )
                     order = trading_client.submit_order(order_request)
-                    sendNotification('A market SELL order was placed for: ' + order.symbol)
+                    sendNotification(f'A market SELL order was placed for: {order.symbol}')
 
             # Check if I have cash to buy stocks with
             account = trading_client.get_account()
@@ -175,7 +175,7 @@ def main():
                 target_assets = list(filter(is_target_asset, assets))
                 cheap_symbols = get_cheap_symbols(target_assets, 2, int(float(account.cash)))
                 buyable_symbols, sellable_symbols = get_actionable_assets(cheap_symbols)
-                sendNotification(str(buyable_symbols))
+                sendNotification(f'Buyable symbols: {buyable_symbols}')
 
                 while float(account.cash) > 5 and len(buyable_symbols) > 0:
                     order_request = MarketOrderRequest(
@@ -186,7 +186,7 @@ def main():
                         time_in_force=TimeInForce.DAY
                     )
                     order = trading_client.submit_order(order_request)
-                    sendNotification('A market BUY order was placed for: ' + order.symbol)
+                    sendNotification(f'A market BUY order was placed for: {order.symbol}')
                     # 1 minute; letting orders settle and cash update
                     time.sleep(60)
                     account = trading_client.get_account()
@@ -194,7 +194,7 @@ def main():
 
         sendNotification(f'This script took {datetime.now() - start_time}')
     except Exception as e:
-        sendNotification('@everyone\nERROR: ' + str(e))
+        sendNotification(f'@everyone\nERROR: {e}')
 
 
 if __name__ == '__main__':
