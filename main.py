@@ -213,7 +213,7 @@ def main():
 
 
 if __name__ == "__main__":
-    schedule.every().day.at("15:50").do(main)
+    schedule.every().day.at("15:30").do(main)
 
     while True:
         schedule.run_pending()
