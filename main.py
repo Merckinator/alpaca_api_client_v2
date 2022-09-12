@@ -142,7 +142,7 @@ def main():
 
         if market.is_open:
             # Check if I own stocks and if I should sell them
-            positions = TradingClient.get_all_positions()
+            positions = trading_client.get_all_positions()
             positions_symbols = [position.symbol for position in positions]
             buyable_symbols, sellable_symbols = get_actionable_assets(positions_symbols)
             for position in positions:
@@ -198,7 +198,7 @@ def main():
 
 
 if __name__ == '__main__':
-    schedule.every().day.at("15:30").do(main)
+    schedule.every().day.at("15:50").do(main)
 
     while True:
         schedule.run_pending()
