@@ -124,6 +124,9 @@ def get_actionable_assets(cheap_assets):
             short_sma, long_sma = get_SMAs(close_prices)
             # a 'buy-able' asset's short_sma should have recently rose above its long_sma
             # check all cheap assets for 'buy-able'
+            sendNotification(
+                f"Processing symbol {symbol} with short_sma's {short_sma[0]} and {short_sma[1]} and long_sma's {long_sma[0]} and {long_sma[1]}."
+            )
             if short_sma[0] > long_sma[0] and short_sma[1] < long_sma[1]:
                 buyable_assets.append(symbol)
             elif short_sma[0] < long_sma[0] and short_sma[1] > long_sma[1]:
