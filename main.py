@@ -120,6 +120,7 @@ def get_actionable_assets(cheap_assets):
         close_prices = [bar.close for bar in bars]
         close_prices.reverse()  # reversing makes it new to old
 
+        sendNotification(f"For symbol {symbol} the close prices are: {close_prices}")
         if len(close_prices) > 200:
             short_sma, long_sma = get_SMAs(close_prices)
             # a 'buy-able' asset's short_sma should have recently rose above its long_sma
