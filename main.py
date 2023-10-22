@@ -173,6 +173,7 @@ def main():
 
             # Check if I have cash to buy stocks with
             account = trading_client.get_account()
+            sendNotification(f"Account currently has {account.cash} cash available")
             if float(account.cash) > 5:
                 nasdaq_asset_request = GetAssetsRequest(
                     status=AssetStatus.ACTIVE,
