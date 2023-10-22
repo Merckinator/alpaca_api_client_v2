@@ -2,6 +2,7 @@ import os
 from datetime import datetime, timedelta
 import time
 
+import random
 import requests
 import schedule
 
@@ -196,7 +197,7 @@ def main():
 
                 while float(account.cash) > 5 and len(buyable_symbols) > 0:
                     order_request = MarketOrderRequest(
-                        symbol=position.symbol,
+                        symbol=random.choice(buyable_symbols),
                         qty=1,
                         side=OrderSide.BUY,
                         type=OrderType.MARKET,
