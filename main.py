@@ -84,8 +84,8 @@ def get_cheap_symbols(assets, low, high):
 
 
 def get_SMAs(items):
-    """Calculates the short (50-day) and long (200-day) simple moving average of a symbol."""
-    short_period, long_period = 50, 200
+    """Calculates the short (30-day) and long (100-day) simple moving average of a symbol."""
+    short_period, long_period = 30, 100
     shorter, longer = [], []
     for index, _ in enumerate(items):
         # print(index)
@@ -122,17 +122,18 @@ def get_actionable_assets(cheap_assets):
         close_prices.reverse()  # reversing makes it new to old
 
         sendNotification(f"For symbol {symbol} the close prices are: {close_prices}")
-        if len(close_prices) > 200:
+        if len(close_prices) > 100:
             short_sma, long_sma = get_SMAs(close_prices)
             # a 'buy-able' asset's short_sma should have recently rose above its long_sma
             # check all cheap assets for 'buy-able'
-            sendNotification(
-                f"Processing symbol {symbol} with short_sma's {short_sma[0]} and {short_sma[1]} and long_sma's {long_sma[0]} and {long_sma[1]}."
-            )
-            if short_sma[0] > long_sma[0] and short_sma[1] < long_sma[1]:
-                buyable_assets.append(symbol)
-            elif short_sma[0] < long_sma[0] and short_sma[1] > long_sma[1]:
-                sellable_assets.append(symbol)
+            if len(short_sma) > 1 and len(long_sma) > 1:
+                sendNotification(
+                    f"Processing symbol {symbol} with short_sma's {short_sma[0]} and {short_sma[1]} and long_sma's {long_sma[0]} and {long_sma[1]}."
+                )
+                if short_sma[0] > long_sma[0] and short_sma[1] < long_sma[1]:
+                    buyable_assets.append(symbol)
+                elif short_sma[0] < long_sma[0] and short_sma[1] > long_sma[1]:
+                    sellable_assets.append(symbol)
 
     return (buyable_assets, sellable_assets)
 
