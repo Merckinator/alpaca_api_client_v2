@@ -43,20 +43,7 @@ def is_target_asset(asset):
     )
 
 
-def can_still_afford(symbols, bankroll):
-    """Returns a new list of symbols whose prices are less than bankroll."""
-    still_buyable = []
-    for symbol in symbols:
-        bar_request = StockLatestBarRequest(symbol_or_symbols=symbol)
-        bar = data_client.get_stock_latest_bar(bar_request)
-
-        if float(bankroll) > bar.close:
-            still_buyable.append(symbol)
-
-    return still_buyable
-
-
-def get_cheap_symbols(assets, low, high):
+def get_cheap_symbols(symbols, low, high):
     """
     Finds the symbols in the list of assets that are priced
     between the low and high parameters.
@@ -69,18 +56,15 @@ def get_cheap_symbols(assets, low, high):
     [str]: a list of the stock symbols whose price
         falls within the given price range.
     """
-    print(f"looking through {len(assets)} assets...")
-    cheap_assets = []
-    bar_request = StockLatestBarRequest(symbol_or_symbols=[x.symbol for x in assets])
+    print(f"looking through {len(symbols)} assets...")
+    bar_request = StockLatestBarRequest(symbol_or_symbols=symbols)
     bars = data_client.get_stock_latest_bar(bar_request)
 
-    for index, (symbol, bar) in enumerate(bars.items()):
-        if bar.close > low and bar.close < high:
-            cheap_assets.append(symbol)
-        if index % 100 == 0:
-            print("100 assets queried...")
-
-    return cheap_assets
+    return [
+        symbol
+        for index, (symbol, bar) in enumerate(bars.items())
+        if bar.close > low and bar.close < high
+    ]
 
 
 def get_SMAs(items):
@@ -197,7 +181,7 @@ def main():
                 target_assets = list(filter(is_target_asset, assets))
                 sendNotification(f"Target assets: {target_assets}")
                 cheap_symbols = get_cheap_symbols(
-                    target_assets, 2, int(float(account.cash))
+                    [x.symbol for x in target_assets], 2, int(float(account.cash))
                 )
                 sendNotification(f"Cheap symbols: {cheap_symbols}")
                 buyable_symbols, sellable_symbols = get_actionable_assets(cheap_symbols)
@@ -218,7 +202,9 @@ def main():
                     # 1 minute; letting orders settle and cash update
                     time.sleep(60)
                     account = trading_client.get_account()
-                    buyable_symbols = can_still_afford(buyable_symbols, account.cash)
+                    buyable_symbols = get_cheap_symbols(
+                        buyable_symbols, 1, account.cash
+                    )
 
         sendNotification(f"This script took {datetime.now() - start_time}")
     except Exception as e:
