@@ -191,9 +191,11 @@ def main():
                 ) + trading_client.get_all_assets(nyse_asset_request)
 
                 target_assets = list(filter(is_target_asset, assets))
+                sendNotification(f"Target assets: {target_assets}")
                 cheap_symbols = get_cheap_symbols(
                     target_assets, 2, int(float(account.cash))
                 )
+                sendNotification(f"Cheap symbols: {cheap_symbols}")
                 buyable_symbols, sellable_symbols = get_actionable_assets(cheap_symbols)
                 sendNotification(f"Buyable symbols: {buyable_symbols}")
 
