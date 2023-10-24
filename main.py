@@ -143,10 +143,14 @@ def main():
         start_time = datetime.now()
         global data_client
         data_client = StockHistoricalDataClient(
-            os.environ.get("APCA_API_KEY_ID"), os.environ.get("APCA_API_SECRET_KEY")
+            os.environ.get("APCA_API_KEY_ID"),
+            os.environ.get("APCA_API_SECRET_KEY"),
+            paper=False,
         )
         trading_client = TradingClient(
-            os.environ.get("APCA_API_KEY_ID"), os.environ.get("APCA_API_SECRET_KEY")
+            os.environ.get("APCA_API_KEY_ID"),
+            os.environ.get("APCA_API_SECRET_KEY"),
+            paper=False,
         )
 
         # Check if the market is open, if it isn't then don't do anything else
