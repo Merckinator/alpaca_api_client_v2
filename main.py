@@ -127,9 +127,7 @@ def main():
         start_time = datetime.now()
         global data_client
         data_client = StockHistoricalDataClient(
-            os.environ.get("APCA_API_KEY_ID"),
-            os.environ.get("APCA_API_SECRET_KEY"),
-            paper=False,
+            os.environ.get("APCA_API_KEY_ID"), os.environ.get("APCA_API_SECRET_KEY")
         )
         trading_client = TradingClient(
             os.environ.get("APCA_API_KEY_ID"),
